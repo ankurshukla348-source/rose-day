@@ -1,44 +1,889 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy Rose Day</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FDF6F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>For Trinh — I'm Sorry & I Love You</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#FDF6F0',
+        cream2: '#FFF9F4',
+        blush: '#F9E2DE',
+        blushdeep: '#F4CFC9',
+        wine: '#5E1E33',
+        winedeep: '#3D1322',
+        gold: '#B9975B',
+        golddark: '#8E7440',
+        ink: '#2E1A22',
+        muted: '#8A737C'
+      },
+      fontFamily: {
+        serif: ['"Cormorant Garamond"', 'serif'],
+        sans: ['Inter', 'sans-serif'],
+        hand: ['Caveat', 'cursive']
+      },
+      boxShadow: {
+        soft: '0 10px 40px -12px rgba(94,30,51,0.18)',
+        card: '0 20px 60px -20px rgba(94,30,51,0.25)',
+        glow: '0 0 0 6px rgba(185,151,91,0.12)'
+      }
+    }
+  }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, sans-serif;
-}
-.container {
-  text-align: center;
-  color: #b3002d;
-}
-.rose {
-  font-size: 90px;
-  animation: float 2.5s ease-in-out infinite;
-}
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-25px); }
-  100% { transform: translateY(0); }
-}
-h1 {
-  margin: 20px 0 10px;
-}
-p {
-  font-size: 20px;
-}
+  *{ -webkit-tap-highlight-color: transparent; }
+  html{ scroll-behavior:smooth; }
+  body{ background:#FDF6F0; color:#2E1A22; font-family:Inter,sans-serif; overflow-x:hidden; }
+  ::selection{ background:#5E1E33; color:#fff; }
+  .serif{ font-family:"Cormorant Garamond",serif; }
+  .hand{ font-family:Caveat,cursive; }
+  #petalCanvas{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+  .orb{ position:fixed; border-radius:9999px; filter:blur(80px); opacity:.5; pointer-events:none; z-index:0; }
+  .grain{ position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.06; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  #progressBar{ position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,#5E1E33,#B9975B,#E8AFAF); width:0%; z-index:80; }
+  .reveal{ opacity:0; transform:translateY(28px); }
+  .eyebrow{ letter-spacing:.22em; font-size:11px; font-weight:600; text-transform:uppercase; }
+  .tape{ position:absolute; top:-12px; left:50%; transform:translateX(-50%) rotate(-4deg); width:92px; height:26px; background:rgba(185,151,91,.28); backdrop-filter:blur(2px); border-left:1px dashed rgba(255,255,255,.6); border-right:1px dashed rgba(255,255,255,.6); }
+  .polaroid{ background:#fff; padding:10px 10px 0 10px; border-radius:14px; box-shadow:0 20px 50px -18px rgba(61,19,34,.35); border:1px solid rgba(185,151,91,.2); }
+  .wax{ background:radial-gradient(circle at 30% 30%, #8E2E4A, #5E1E33 60%, #3D1322); box-shadow:0 8px 20px rgba(94,30,51,.4), inset 0 2px 6px rgba(255,255,255,.3), inset 0 -4px 8px rgba(0,0,0,.3); }
+  .btn-wine{ background:#5E1E33; color:#FFF9F4; transition:.3s; box-shadow:0 12px 30px -10px rgba(94,30,51,.6); }
+  .btn-wine:active{ transform:scale(.97); }
+  .btn-ghost{ border:1px solid rgba(94,30,51,.2); color:#5E1E33; background:rgba(255,255,255,.7); backdrop-filter:blur(8px); }
+  .card-line{ background:linear-gradient(transparent 95%, rgba(185,151,91,.35) 95%); }
+  .timeline-line{ position:absolute; left:19px; top:10px; bottom:10px; width:2px; background:linear-gradient(#E8CFC8,#B9975B,#5E1E33); opacity:.4; border-radius:999px; }
+  .timeline-progress{ position:absolute; left:19px; top:10px; width:2px; background:#5E1E33; border-radius:999px; z-index:1; transition:height .2s; }
+  .reason-card{ transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .35s; will-change:transform; }
+  .joke-body{ max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.22,1,.36,1); }
+  .joke.open .joke-body{ max-height:500px; }
+  .joke.open .joke-plus{ transform:rotate(45deg); }
+  .joke-plus{ transition:.3s; }
+  .marquee{ display:flex; gap:12px; animation:scrollX 22s linear infinite; width:max-content; }
+  @keyframes scrollX{ to{ transform:translateX(-50%);} }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(var(--r,0deg)); } 50%{ transform:translateY(-10px) rotate(var(--r,0deg)); } }
+  .floaty{ animation:floaty 5s ease-in-out infinite; }
+  @keyframes beat{ 0%,100%{ transform:scale(1);} 12%{ transform:scale(1.15);} 24%{ transform:scale(1);} 36%{ transform:scale(1.12);} 48%{ transform:scale(1);} }
+  .heartbeat{ animation:beat 1.8s infinite; transform-origin:center; }
+  @keyframes shimmer{ 0%{ background-position:-200% 0;} 100%{ background-position:200% 0;} }
+  .shimmer{ background:linear-gradient(110deg, #5E1E33 30%, #A85D78 45%, #B9975B 50%, #A85D78 55%, #5E1E33 70%); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:shimmer 6s linear infinite; }
+  #tabbar{ position:fixed; bottom:12px; left:50%; transform:translateX(-50%); width:min(480px, calc(100% - 20px)); z-index:70; background:rgba(255,253,250,.88); backdrop-filter:blur(18px); border:1px solid rgba(185,151,91,.25); border-radius:22px; box-shadow:0 18px 50px -12px rgba(61,19,34,.35); }
+  .tab{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 2px 8px; color:#8A737C; font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; border-radius:16px; transition:.25s; }
+  .tab.active{ color:#5E1E33; background:rgba(94,30,51,.07); }
+  .tab.active svg{ transform:scale(1.15); }
+  .tab svg{ transition:.25s; }
+  .hold-ring{ background:conic-gradient(#5E1E33 var(--p,0%), rgba(94,30,51,.12) var(--p,0%)); }
+  .lightbox-img{ max-height:62vh; object-fit:contain; }
+  input[type=file]{ display:none; }
+  .dashed-upload{ border:1.5px dashed rgba(94,30,51,.3); background:rgba(255,255,255,.6); transition:.3s; }
+  .dashed-upload:active{ transform:scale(.98); background:#fff; }
+  .chip{ border:1px solid rgba(94,30,51,.15); background:#fff; }
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ scrollbar-width:none; }
+  .letter-paper{ background:linear-gradient(#FFFEFB, #FFF7F0); background-image:radial-gradient(rgba(185,151,91,.12) 1px, transparent 1px); background-size:22px 22px; }
+  .envelope-flap{ clip-path:polygon(0 0, 50% 55%, 100% 0, 100% 12%, 50% 67%, 0 12%); }
+  .modal-bg{ background:rgba(45,15,25,.55); backdrop-filter:blur(8px); }
+  .coupon-claimed{ background:#5E1E33 !important; color:#fff !important; }
+  .coupon-claimed .claim-label{ display:none; }
+  .coupon-claimed .claimed-label{ display:inline !important; }
+  .claimed-label{ display:none; }
+  .heart-particle{ position:fixed; pointer-events:none; z-index:90; animation:heartFly 1.2s ease-out forwards; }
+  @keyframes heartFly{ 0%{ transform:translate(0,0) scale(.6) rotate(0); opacity:1;} 100%{ transform:translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot)); opacity:0;} }
+  .toast-show{ transform:translate(-50%,0) !important; opacity:1 !important; }
+  details summary::-webkit-details-marker{ display:none; }
+  .vn{ border-bottom:1px dotted #B9975B; }
 </style>
 </head>
-<body>
-  <div class="container">
-    <div class="rose">🌹</div>
-    <h1>Happy Rose Day</h1>
-    <p>cookie from ur pookie ❤️</p>
+<body class="antialiased">
+
+<div id="progressBar"></div>
+<canvas id="petalCanvas"></canvas>
+<div class="orb" style="width:420px;height:420px;background:#F4CFC9;top:-120px;left:-120px;"></div>
+<div class="orb" style="width:380px;height:380px;background:#E8D9B8;bottom:10%;right:-140px;"></div>
+<div class="orb" style="width:300px;height:300px;background:#F9E2DE;top:40%;left:-100px;opacity:.35;"></div>
+<div class="grain"></div>
+
+<!-- TOP BAR -->
+<header class="fixed top-0 left-0 right-0 z-[60]">
+  <div class="mx-auto max-w-[480px] px-4 pt-3">
+    <div class="flex items-center justify-between rounded-2xl px-4 py-2.5 bg-[#FFFEFB]/85 backdrop-blur-xl border border-[#B9975B]/25 shadow-soft">
+      <a href="#home" class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-full wax text-[#FFF3E8] serif italic flex items-center justify-center text-lg font-semibold">T</span>
+        <span class="leading-tight">
+          <span class="block text-[11px] tracking-[.2em] uppercase font-semibold text-wine">for Trinh</span>
+          <span id="dayPill" class="block text-[11px] text-muted">day 543 • almost there</span>
+        </span>
+      </a>
+      <div class="flex items-center gap-2">
+        <button id="musicBtn" class="w-10 h-10 rounded-full btn-ghost flex items-center justify-center" aria-label="Play lullaby">
+          <svg id="musicIconOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <svg id="musicIconOn" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </button>
+        <a href="#forgive" class="text-[11px] font-semibold tracking-wider uppercase bg-wine text-cream px-3.5 py-2.5 rounded-full btn-wine">Forgive me?</a>
+      </div>
+    </div>
   </div>
+</header>
+
+<main class="relative z-10 mx-auto max-w-[480px] px-4 pb-32 pt-24">
+
+  <!-- HERO -->
+  <section id="home" class="pt-2">
+    <div class="reveal text-center">
+      <p class="eyebrow text-golddark">a little corner of the internet • just for you</p>
+      <div class="mt-3 inline-flex items-center gap-2 chip rounded-full px-4 py-1.5 text-[12px] text-wine">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        online love since March 2025 • long distance, close hearts
+      </div>
+      <h1 class="serif mt-5 text-[54px] leading-[.95] font-medium text-winedeep">Trinh,<br><span class="italic font-semibold shimmer">I'm so sorry.</span></h1>
+      <p class="hand text-[24px] text-[#8E4A5E] mt-2 -rotate-1">anh xin lỗi em — really, deeply sorry.</p>
+      <p class="mt-4 text-[15px] leading-relaxed text-[#5A404B] max-w-[340px] mx-auto">I used my words carelessly. I said hurtful things and I made fun of you — when my words should have only ever protected you. This is my apology, my love letter, and my promise. All in one place, all for you.</p>
+      <div class="mt-6 flex gap-3 justify-center">
+        <a href="#letter" class="btn-wine rounded-full px-6 py-3.5 text-[14px] font-semibold flex items-center gap-2">
+          Read my apology
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
+        <a href="#story" class="btn-ghost rounded-full px-6 py-3.5 text-[14px] font-semibold">Our story</a>
+      </div>
+    </div>
+
+    <!-- Polaroids -->
+    <div class="reveal mt-8 grid grid-cols-2 gap-4">
+      <div class="polaroid rotate-[-4deg] floaty" style="--r:-4deg">
+        <div class="tape"></div>
+        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop" alt="Us" class="w-full h-44 object-cover rounded-lg" loading="lazy">
+        <p class="hand text-[19px] text-center py-2 text-wine">you + me, always</p>
+      </div>
+      <div class="polaroid rotate-[3deg] floaty mt-6" style="--r:3deg; animation-delay:.8s">
+        <div class="tape"></div>
+        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=600&auto=format&fit=crop" alt="Holding on" class="w-full h-44 object-cover rounded-lg" loading="lazy">
+        <p class="hand text-[19px] text-center py-2 text-wine">holding on across miles</p>
+      </div>
+    </div>
+
+    <!-- Counter -->
+    <div class="reveal mt-6 rounded-[26px] bg-winedeep text-cream p-6 shadow-card relative overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-[#8E2E4A]/40 blur-2xl"></div>
+      <div class="absolute -bottom-20 -left-16 w-56 h-56 rounded-full bg-gold/20 blur-2xl"></div>
+      <p class="eyebrow text-gold/90 text-center">almost 543 days of us</p>
+      <h2 class="serif italic text-center text-[28px] mt-1">every second still counts</h2>
+      <div class="grid grid-cols-4 gap-2 mt-5 text-center">
+        <div class="bg-white/10 rounded-2xl py-3 border border-white/10"><div id="cDays" class="serif text-[28px] font-semibold leading-none">543</div><div class="text-[10px] tracking-[.18em] uppercase mt-1 opacity-70">days</div></div>
+        <div class="bg-white/10 rounded-2xl py-3 border border-white/10"><div id="cHours" class="serif text-[28px] font-semibold leading-none">00</div><div class="text-[10px] tracking-[.18em] uppercase mt-1 opacity-70">hours</div></div>
+        <div class="bg-white/10 rounded-2xl py-3 border border-white/10"><div id="cMins" class="serif text-[28px] font-semibold leading-none">00</div><div class="text-[10px] tracking-[.18em] uppercase mt-1 opacity-70">mins</div></div>
+        <div class="bg-white/10 rounded-2xl py-3 border border-white/10"><div id="cSecs" class="serif text-[28px] font-semibold leading-none text-blushdeep">00</div><div class="text-[10px] tracking-[.18em] uppercase mt-1 opacity-70">secs</div></div>
+      </div>
+      <p class="text-center text-[12.5px] mt-4 text-cream/70">since that first “hi” in March 2025 • <span id="cDateLine">counting live</span></p>
+      <div class="mt-4 flex items-center justify-center gap-2 text-[12px] text-cream/80">
+        <svg class="heartbeat" width="18" height="18" viewBox="0 0 24 24" fill="#E8AFAF"><path d="M12 21s-7.5-4.9-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1.2 4.3 2.6h2.4C14 6.2 15.5 5 17.5 5 21 5 23 8.5 21.5 12c-2 4.1-9.5 9-9.5 9z" transform="scale(.95)"/></svg>
+        <span id="tapTiny">tap the big heart below to send me love</span>
+      </div>
+    </div>
+
+    <div class="reveal mt-4 flex items-center justify-center gap-3 text-muted text-[12px]">
+      <span class="h-px w-10 bg-wine/20"></span> scroll slowly, my love <span class="h-px w-10 bg-wine/20"></span>
+    </div>
+  </section>
+
+  <!-- LETTER -->
+  <section id="letter" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">01 • the apology</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">First, I owe you<br><span class="italic text-wine">a real apology.</span></h2>
+      <p class="text-[14px] text-muted mt-2">No jokes. No excuses. Just me, honest.</p>
+    </div>
+
+    <div class="reveal mt-5 rounded-[24px] overflow-hidden shadow-card border border-gold/20">
+      <div class="bg-gradient-to-b from-[#6E2440] to-[#4A1629] px-6 pt-6 pb-10 text-center relative">
+        <div class="envelope-flap absolute top-0 left-0 right-0 h-10 bg-[#3D1322]/60"></div>
+        <div class="w-14 h-14 mx-auto rounded-full wax border-2 border-gold/50 flex items-center justify-center text-cream serif italic text-xl relative z-10 -mb-2">T</div>
+        <p class="text-cream/70 text-[11px] tracking-[.22em] uppercase mt-3">sealed with regret • opened with love</p>
+        <p class="serif italic text-cream text-[22px] mt-1">for Trinh, from my whole heart</p>
+      </div>
+      <div class="letter-paper px-6 py-7 -mt-4 rounded-t-[24px] relative">
+        <p class="hand text-[22px] text-wine">My dearest Trinh,</p>
+        <div id="letterText" class="mt-3 space-y-4 text-[15px] leading-[1.75] text-[#4A2E3A]">
+          <p>I've been staring at my phone for hours trying to find perfect words, but the truth is simple and it hurts to say: <strong class="text-winedeep">I was wrong.</strong></p>
+          <p>I said hurtful things. I made fun of you — the girl I love more than anything — and I turned my words, which should protect you, into something that made you feel small. There is no joke in the world worth your tears. <em>Em không đáng phải nghe những lời đó, especially not from me.</em></p>
+          <p>You trusted me with your softest parts across thousands of miles, through laggy calls and late nights and “one more minute” that became three hours. And I was careless with that trust. I’m not here to explain it away with “I was tired” or “I didn’t mean it.” Impact matters more than intent, and I hurt you. I see that. I own that.</p>
+          <p>What I meant as teasing landed as disrespect. I hate that I made you — so kind, so funny, so strong — question for even a second how beautiful and loved you are. If I could take those words back, I would. Since I can’t, I will do the next best thing: <strong class="text-winedeep">change.</strong></p>
+          <p>So here is my promise, not just pretty words: I will pause before I speak, especially when I’m joking. I will listen first when you’re hurt, not defend myself. Your feelings will never be the punchline again. And I will show you in small everyday ways that you are cherished — because you are.</p>
+          <p>543 days (almost) of us, all online yet so real. You’ve been my morning, my midnight, my home I haven’t hugged yet. Please forgive me, not because I deserve it instantly, but because I want to spend every day after this proving I’ve learned.</p>
+          <p><span class="vn">Anh yêu em</span> — more than yesterday, more carefully tomorrow.</p>
+        </div>
+        <div class="mt-6 flex items-end justify-between">
+          <div>
+            <p class="hand text-[28px] text-winedeep -rotate-2">— your boy, sorry & yours</p>
+            <p class="text-[12px] text-muted mt-1">written at 2am, thinking only of you • Sept 2026</p>
+          </div>
+          <div class="text-right"><div class="w-12 h-12 rounded-full bg-blush flex items-center justify-center heartbeat"><svg width="22" height="22" viewBox="0 0 24 24" fill="#5E1E33"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div></div>
+        </div>
+        <div class="mt-5 flex gap-2">
+          <button id="btnReadAloud" class="flex-1 btn-ghost rounded-full py-3 text-[13px] font-semibold flex items-center justify-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>
+            <span id="readLabel">Hear me say it</span>
+          </button>
+          <button id="btnCopyLetter" class="flex-1 btn-ghost rounded-full py-3 text-[13px] font-semibold">Copy letter</button>
+        </div>
+        <!-- Hold to seal -->
+        <div class="mt-4 rounded-2xl bg-white/70 border border-wine/10 p-4 flex items-center gap-4">
+          <div class="relative w-[68px] h-[68px] shrink-0">
+            <div id="holdRing" class="hold-ring absolute inset-0 rounded-full p-[4px]"><div class="w-full h-full rounded-full bg-cream flex items-center justify-center text-[26px] select-none">💋</div></div>
+          </div>
+          <div class="flex-1">
+            <p class="text-[13.5px] font-semibold text-winedeep">Hold to seal with a kiss</p>
+            <p id="holdHint" class="text-[12px] text-muted">press & hold the lips for 1.5s</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promises -->
+    <div class="reveal mt-5 rounded-[24px] bg-white/80 backdrop-blur border border-gold/20 p-5 shadow-soft">
+      <div class="flex items-center justify-between">
+        <h3 class="serif text-[22px] text-winedeep italic">My 4 promises to you</h3>
+        <span id="promiseCount" class="text-[11px] font-bold tracking-widest uppercase bg-blush text-wine px-3 py-1.5 rounded-full">0/4</span>
+      </div>
+      <div id="promiseList" class="mt-3 space-y-2.5"></div>
+      <p class="hand text-[19px] text-center mt-3 text-[#8E4A5E]">ticked = locked in. I mean it.</p>
+    </div>
+  </section>
+
+  <!-- STORY TIMELINE -->
+  <section id="story" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">02 • almost 543 days</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">We started online.<br><span class="italic text-wine">We became everything.</span></h2>
+      <p class="text-[14px] text-muted mt-2">March 2025 → now. Long distance, but never distant.</p>
+    </div>
+    <div class="reveal mt-6 relative pl-2">
+      <div class="timeline-line"></div>
+      <div id="timelineProg" class="timeline-progress" style="height:0"></div>
+      <div id="timeline" class="space-y-4 relative z-10"></div>
+    </div>
+    <div class="reveal mt-5 rounded-[22px] overflow-hidden relative shadow-soft border border-white">
+      <img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop" class="w-full h-52 object-cover" alt="Flowers for Trinh" loading="lazy">
+      <div class="absolute inset-0 bg-gradient-to-t from-winedeep/85 via-winedeep/20 to-transparent"></div>
+      <div class="absolute bottom-0 p-5"><p class="hand text-[24px] text-cream leading-none">if I could, I'd fly these to you tonight</p><p class="text-cream/70 text-[12px] mt-1">…until then, accept this whole website as flowers</p></div>
+    </div>
+  </section>
+
+  <!-- REASONS -->
+  <section id="reasons" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">03 • why you?</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">Reasons you're<br><span class="italic text-wine">so easy to love.</span></h2>
+      <p class="text-[14px] text-muted mt-2">Swipe through, my love. There are <span id="reasonTotalLabel">12</span> — but I could write 543.</p>
+    </div>
+
+    <div class="reveal mt-5 relative h-[380px]" id="deckWrap">
+      <div class="absolute inset-x-4 top-3 bottom-0 rounded-[26px] bg-blush/60 rotate-[-3deg]"></div>
+      <div class="absolute inset-x-4 top-3 bottom-0 rounded-[26px] bg-white/60 rotate-[2deg] border border-gold/20"></div>
+      <div id="reasonCard" class="reason-card absolute inset-0 rounded-[26px] bg-[#FFFEFB] border border-gold/25 shadow-card p-7 flex flex-col overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-wine via-gold to-blushdeep"></div>
+        <div class="flex items-center justify-between">
+          <span id="reasonTag" class="text-[10px] font-bold tracking-[.2em] uppercase bg-wine text-cream px-3 py-1.5 rounded-full">reason 01</span>
+          <span id="reasonCount" class="serif italic text-muted text-[15px]">1 / 12</span>
+        </div>
+        <div class="flex-1 flex flex-col justify-center text-center py-4">
+          <div class="mx-auto w-14 h-14 rounded-full bg-blush flex items-center justify-center mb-4"><span id="reasonEmoji" class="text-[26px]">🌙</span></div>
+          <h3 id="reasonTitle" class="serif text-[28px] leading-tight text-winedeep font-semibold">Your 2am voice</h3>
+          <p id="reasonText" class="text-[14.5px] leading-relaxed text-[#5A404B] mt-3">Sleepy, soft, a little giggly — my favorite sound in the world, even through a crackly call.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 h-1.5 rounded-full bg-wine/10 overflow-hidden"><div id="reasonBar" class="h-full bg-wine rounded-full transition-all" style="width:8%"></div></div>
+          <span id="lovedMini" class="text-[11px] font-bold text-wine whitespace-nowrap">♥ 0 loved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal mt-4 grid grid-cols-2 gap-3">
+      <button id="btnReasonNext" class="btn-ghost rounded-2xl py-4 text-[14px] font-semibold">Skip →</button>
+      <button id="btnReasonLove" class="btn-wine rounded-2xl py-4 text-[14px] font-semibold flex items-center justify-center gap-2">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Love it
+      </button>
+    </div>
+    <button id="btnShuffle" class="reveal w-full mt-2 text-[12px] font-semibold tracking-widest uppercase text-muted py-2">↻ shuffle reasons</button>
+
+    <!-- Appreciation wall -->
+    <div class="reveal mt-6">
+      <h3 class="serif italic text-[24px] text-winedeep text-center">little thank-yous, big love</h3>
+      <div class="mt-3 overflow-hidden -mx-4 px-4">
+        <div class="marquee" id="thanksMarquee"></div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-[#FFF3B8]/60 border border-gold/20 p-4 rotate-[-1.5deg]"><p class="hand text-[19px] leading-tight text-winedeep">thank you for staying up late just to hear about my day</p></div>
+        <div class="rounded-2xl bg-[#FFE4E0]/80 border border-wine/10 p-4 rotate-[1.5deg]"><p class="hand text-[19px] leading-tight text-winedeep">thank you for forgiving me even when it’s hard</p></div>
+        <div class="rounded-2xl bg-[#E8F0E4]/80 border border-green-900/10 p-4 rotate-[1deg]"><p class="hand text-[19px] leading-tight text-winedeep">thank you for believing in us when miles test us</p></div>
+        <div class="rounded-2xl bg-[#E9E3FF]/60 border border-purple-900/10 p-4 rotate-[-1deg]"><p class="hand text-[19px] leading-tight text-winedeep">thank you for being you. simply, magic you.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIDE JOKES + OPEN WHEN -->
+  <section id="jokes" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">04 • only we get it</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">Inside jokes &<br><span class="italic text-wine">open-when letters.</span></h2>
+      <p class="text-[14px] text-muted mt-2">Tap to open. Laugh, cry a little, forgive me a lot.</p>
+    </div>
+    <div id="jokeList" class="reveal mt-5 space-y-3"></div>
+    <div class="reveal mt-3 rounded-2xl bg-white/70 border border-dashed border-wine/25 p-4">
+      <p class="text-[13px] font-semibold text-winedeep">Got one I forgot? Add our joke:</p>
+      <div class="mt-2 flex gap-2">
+        <input id="newJokeTitle" placeholder="e.g. The noodle incident" class="flex-1 min-w-0 bg-cream rounded-xl px-3 py-2.5 text-[13px] border border-wine/15 outline-none focus:border-wine">
+        <button id="btnAddJoke" class="bg-wine text-cream text-[13px] font-semibold px-4 rounded-xl btn-wine shrink-0">Add</button>
+      </div>
+      <input id="newJokePunch" placeholder="punchline / memory…" class="mt-2 w-full bg-cream rounded-xl px-3 py-2.5 text-[13px] border border-wine/15 outline-none focus:border-wine">
+    </div>
+
+    <div class="reveal mt-6">
+      <h3 class="serif italic text-[24px] text-winedeep text-center">open when you need me</h3>
+      <div class="mt-3 grid grid-cols-2 gap-3" id="openWhenGrid"></div>
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section id="photos" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">05 • our gallery</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">Add <span class="italic text-wine">your</span> pictures, love.</h2>
+      <p class="text-[14px] text-muted mt-2">These live only on this phone — private, just us. Tap <strong>+ Add photos</strong> to upload from your gallery, or take one right now.</p>
+    </div>
+
+    <div class="reveal mt-5 grid grid-cols-2 gap-3">
+      <label class="dashed-upload rounded-2xl p-5 text-center cursor-pointer active:scale-[.98]">
+        <input id="fileGallery" type="file" accept="image/*" multiple>
+        <div class="mx-auto w-11 h-11 rounded-full bg-wine text-cream flex items-center justify-center text-[22px] font-light">+</div>
+        <p class="text-[13.5px] font-bold text-winedeep mt-2">Add photos</p>
+        <p class="text-[11.5px] text-muted">from gallery • many at once</p>
+      </label>
+      <label class="dashed-upload rounded-2xl p-5 text-center cursor-pointer">
+        <input id="fileCamera" type="file" accept="image/*" capture="user">
+        <div class="mx-auto w-11 h-11 rounded-full bg-gold text-white flex items-center justify-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <p class="text-[13.5px] font-bold text-winedeep mt-2">Take one now</p>
+        <p class="text-[11.5px] text-muted">selfie for me? please?</p>
+      </label>
+    </div>
+    <p class="reveal text-center text-[11.5px] text-muted mt-2">tip: photos are auto-compressed & saved on this device • tap any photo to view</p>
+
+    <div id="galleryGrid" class="mt-4 grid grid-cols-2 gap-3"></div>
+    <button id="btnRestore" class="w-full mt-3 text-[12px] text-muted underline underline-offset-4">restore original placeholders</button>
+  </section>
+
+  <!-- COUPONS -->
+  <section id="coupons" class="mt-12">
+    <div class="reveal">
+      <p class="eyebrow text-golddark">06 • let me make it up</p>
+      <h2 class="serif text-[38px] leading-[1.02] mt-2 text-winedeep">Coupons you can<br><span class="italic text-wine">claim anytime.</span></h2>
+    </div>
+    <div id="couponList" class="reveal mt-5 space-y-3"></div>
+  </section>
+
+  <!-- FORGIVE -->
+  <section id="forgive" class="mt-12">
+    <div class="reveal rounded-[28px] bg-gradient-to-b from-[#FFF9F4] to-[#F9E2DE] border border-gold/25 p-7 text-center shadow-card relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-24 bg-white/60 blur-2xl"></div>
+      <p class="eyebrow text-golddark relative">07 • the big question</p>
+      <div class="relative mx-auto mt-4 w-20 h-20 rounded-full bg-white shadow-soft border border-blushdeep flex items-center justify-center heartbeat">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="#5E1E33"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <h2 class="serif text-[36px] leading-[1.05] mt-4 text-winedeep relative">Trinh, will you<br><span class="italic">forgive me?</span></h2>
+      <p class="text-[13.5px] text-[#6B4E5A] mt-3 relative">No pressure, no guilt. Whatever you choose, I’ll keep loving you louder — and better.</p>
+      <div class="mt-5 space-y-2.5 relative">
+        <button id="btnYes" class="w-full btn-wine rounded-2xl py-4 text-[15px] font-bold">Yes, I forgive you ♥</button>
+        <button id="btnTime" class="w-full btn-ghost rounded-2xl py-4 text-[14px] font-semibold">I need a little time</button>
+      </div>
+      <!-- love tap -->
+      <div class="mt-6 rounded-2xl bg-winedeep text-cream p-5 relative overflow-hidden">
+        <p class="text-[11px] tracking-[.2em] uppercase text-gold">tap to send love</p>
+        <button id="loveTapBtn" class="mt-3 mx-auto w-20 h-20 rounded-full bg-gradient-to-b from-[#8E2E4A] to-[#5E1E33] border-2 border-gold/40 shadow-glow flex items-center justify-center active:scale-90 transition text-[34px]">♥</button>
+        <p class="mt-2 serif italic text-[20px]"><span id="loveCount">0</span> little loves sent</p>
+        <p id="loveMsg" class="hand text-[19px] text-blushdeep">every tap = one kiss through the screen</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="mt-10 text-center pb-6">
+    <div class="reveal">
+      <p class="hand text-[26px] text-wine">made with all my heart,</p>
+      <p class="serif italic text-[18px] text-muted -mt-1">for the girl who has all of it.</p>
+      <div class="mt-4 inline-flex items-center gap-2 text-[11px] text-muted bg-white/70 border border-wine/10 rounded-full px-4 py-2">
+        <span class="w-2 h-2 rounded-full bg-wine"></span> T ♥ B • March 2025 → forever
+      </div>
+      <div class="mt-4 flex justify-center gap-4 text-[12px]">
+        <button id="btnHowToSave" class="underline underline-offset-4 text-wine font-semibold">Save to home screen</button>
+        <button id="btnReset" class="underline underline-offset-4 text-muted">Reset my data</button>
+      </div>
+      <p class="text-[11px] text-muted/70 mt-3">anh yêu em, Trinh. Today, tomorrow, patiently, always.</p>
+    </div>
+  </footer>
+</main>
+
+<!-- TAB BAR -->
+<nav id="tabbar">
+  <div class="flex px-2 py-1">
+    <a href="#home" data-tab="home" class="tab active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+    <a href="#letter" data-tab="letter" class="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Letter</a>
+    <a href="#story" data-tab="story" class="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Us</a>
+    <a href="#reasons" data-tab="reasons" class="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-4.5-9-9c-1.2-2.7.5-6 3.5-6 2 0 3.5 1.2 4.3 2.6h2.4C14 7.2 15.5 6 17.5 6c3 0 4.7 3.3 3.5 6-2 4.5-9 9-9 9z"/></svg>Reasons</a>
+    <a href="#photos" data-tab="photos" class="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></svg>Photos</a>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div id="toast" class="fixed left-1/2 bottom-[92px] -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-300 z-[90] bg-winedeep text-cream text-[13px] font-medium px-5 py-3 rounded-full shadow-card max-w-[90%] text-center pointer-events-none">Saved ♥</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="fixed inset-0 z-[85] hidden">
+  <div class="absolute inset-0 modal-bg" id="lbBg"></div>
+  <div class="absolute inset-x-0 bottom-0 top-[6%] mx-auto max-w-[480px] bg-[#FFFEFB] rounded-t-[26px] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-wine/10">
+      <p class="text-[11px] tracking-[.2em] uppercase font-bold text-muted"><span id="lbIndex">1 / 1</span> • our memory</p>
+      <button id="lbClose" class="w-9 h-9 rounded-full bg-wine/10 flex items-center justify-center text-wine font-bold">✕</button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-5">
+      <img id="lbImg" src="" class="w-full lightbox-img rounded-2xl shadow-soft bg-blush" alt="memory">
+      <div class="mt-4 rounded-2xl bg-cream border border-wine/10 p-4">
+        <div class="flex items-start justify-between gap-3">
+          <p id="lbCap" class="hand text-[22px] leading-tight text-winedeep flex-1">caption</p>
+          <button id="lbEdit" class="text-[11px] font-bold uppercase tracking-widest text-golddark border border-gold/40 rounded-full px-3 py-1.5 shrink-0">edit</button>
+        </div>
+        <p id="lbDate" class="text-[12px] text-muted mt-1">date</p>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-3">
+        <button id="lbPrev" class="btn-ghost rounded-xl py-3 text-[13px] font-bold">← Prev</button>
+        <button id="lbDown" class="btn-ghost rounded-xl py-3 text-[13px] font-bold">Download</button>
+        <button id="lbNext" class="btn-ghost rounded-xl py-3 text-[13px] font-bold">Next →</button>
+      </div>
+      <button id="lbDel" class="w-full mt-2 text-[12px] text-red-800/70 underline underline-offset-4 py-2">delete this photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- OPEN WHEN MODAL -->
+<div id="owModal" class="fixed inset-0 z-[85] hidden items-center justify-center p-5">
+  <div class="absolute inset-0 modal-bg" id="owBg"></div>
+  <div class="relative mx-auto max-w-[420px] w-full bg-[#FFFEFB] rounded-[26px] p-7 shadow-card border border-gold/25 text-center">
+    <div id="owEmoji" class="text-[44px]">💌</div>
+    <p id="owKicker" class="eyebrow text-golddark mt-2">open when…</p>
+    <h3 id="owTitle" class="serif text-[28px] text-winedeep mt-1">you're mad at me</h3>
+    <p id="owBody" class="text-[14.5px] leading-relaxed text-[#5A404B] mt-3">body</p>
+    <p class="hand text-[21px] text-wine mt-4">— hugging you from far away</p>
+    <button id="owClose" class="mt-4 w-full btn-wine rounded-2xl py-3.5 text-[14px] font-bold">Hold me (close)</button>
+  </div>
+</div>
+
+<!-- CELEBRATION MODAL -->
+<div id="yesModal" class="fixed inset-0 z-[86] hidden items-center justify-center p-5">
+  <div class="absolute inset-0 modal-bg"></div>
+  <div class="relative mx-auto max-w-[420px] w-full bg-[#FFFEFB] rounded-[28px] p-8 text-center shadow-card border border-gold/30 overflow-hidden">
+    <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-32 bg-blush blur-2xl opacity-70"></div>
+    <div class="relative text-[60px] heartbeat">💖</div>
+    <h3 class="relative serif text-[34px] leading-tight text-winedeep mt-2">Thank you,<br><span class="italic">my love.</span></h3>
+    <p class="relative text-[14px] leading-relaxed text-[#5A404B] mt-3">You have no idea how much this means. I will spend every day proving your forgiveness was worth it. No more careless words — only care. Only us.<br><br><span class="hand text-[22px] text-wine">anh yêu em nhiều lắm, Trinh.</span></p>
+    <button id="yesClose" class="relative mt-5 w-full btn-wine rounded-2xl py-3.5 text-[14px] font-bold">Come here (virtual hug) 🤍</button>
+  </div>
+</div>
+<div id="timeModal" class="fixed inset-0 z-[86] hidden items-center justify-center p-5">
+  <div class="absolute inset-0 modal-bg" id="timeBg"></div>
+  <div class="relative mx-auto max-w-[420px] w-full bg-[#FFFEFB] rounded-[28px] p-8 text-center shadow-card border border-gold/30">
+    <div class="text-[50px]">🌙</div>
+    <h3 class="serif text-[30px] text-winedeep mt-2">Take all the time<br><span class="italic">you need.</span></h3>
+    <p class="text-[14px] leading-relaxed text-[#5A404B] mt-3">I understand, Trinh. Healing isn’t rushed. I’ll be right here — patient, sorry, and loving you quietly until you’re ready. No pressure, ever.</p>
+    <button id="timeClose" class="mt-5 w-full btn-ghost rounded-2xl py-3.5 text-[14px] font-bold">I know you love me ♥</button>
+  </div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('toast-show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('toast-show'),2600); }
+function vibrate(ms){ try{ navigator.vibrate && navigator.vibrate(ms);}catch(e){} }
+function uid(){ return 'id'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ---------- counter ---------- */
+const START = new Date('2025-03-15T20:00:00');
+function tickCounter(){
+  const now=new Date(); let diff=Math.max(0, now-START);
+  const d=Math.floor(diff/86400000); diff-=d*86400000;
+  const h=Math.floor(diff/3600000); diff-=h*3600000;
+  const m=Math.floor(diff/60000); diff-=m*60000;
+  const s=Math.floor(diff/1000);
+  $('#cDays').textContent=d; $('#cHours').textContent=String(h).padStart(2,'0');
+  $('#cMins').textContent=String(m).padStart(2,'0'); $('#cSecs').textContent=String(s).padStart(2,'0');
+  $('#dayPill').textContent='day '+d+' • almost 543 & beyond';
+  $('#cDateLine').textContent='Mar 15, 2025 → '+now.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+}
+setInterval(tickCounter,1000); tickCounter();
+
+/* ---------- petals canvas ---------- */
+(function(){
+  const c=$('#petalCanvas'), ctx=c.getContext('2d'); let W,H,parts=[];
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  resize(); addEventListener('resize',resize);
+  const colors=['#F4CFC9','#E8AFAF','#D9A5A5','#B9975B','#E9C6C2'];
+  function mk(init){ return {x:Math.random()*W, y:init?Math.random()*H:-20, s:4+Math.random()*9, vy:.4+Math.random()*.9, vx:-.4+Math.random()*.8, r:Math.random()*Math.PI*2, vr:-.01+Math.random()*.02, col:colors[Math.floor(Math.random()*colors.length)], a:.25+Math.random()*.45, heart:Math.random()>.5}; }
+  for(let i=0;i<28;i++) parts.push(mk(true));
+  function drawHeart(x,y,s,r,col,a){ ctx.save(); ctx.translate(x,y); ctx.rotate(r); ctx.globalAlpha=a; ctx.fillStyle=col; ctx.beginPath(); const k=s/10; ctx.moveTo(0,3*k); ctx.bezierCurveTo(-6*k,-2*k,-3*k,-7*k,0,-3*k); ctx.bezierCurveTo(3*k,-7*k,6*k,-2*k,0,3*k); ctx.fill(); ctx.restore(); }
+  function loop(){ ctx.clearRect(0,0,W,H);
+    parts.forEach((p,i)=>{ p.y+=p.vy; p.x+=p.vx+Math.sin(p.y/60)*.3; p.r+=p.vr;
+      if(p.y>H+30){ parts[i]=mk(false); }
+      if(p.heart){ drawHeart(p.x,p.y,p.s*1.4,p.r,p.col,p.a); }
+      else{ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.globalAlpha=p.a; ctx.fillStyle=p.col; ctx.beginPath(); ctx.ellipse(0,0,p.s,p.s*.6,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+    });
+    requestAnimationFrame(loop);
+  } loop();
+})();
+
+/* ---------- scroll: progress, reveals, tabs, timeline progress ---------- */
+(function(){
+  gsap.registerPlugin(ScrollTrigger);
+  $$('.reveal').forEach(el=>{ gsap.to(el,{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}}); });
+  const bar=$('#progressBar');
+  addEventListener('scroll',()=>{
+    const h=document.documentElement; const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100; bar.style.width=p+'%';
+    const tl=$('#timeline'); if(tl){ const r=tl.getBoundingClientRect(); const total=r.height; const passed=Math.min(Math.max(innerHeight*0.6 - r.top,0),total); $('#timelineProg').style.height=passed+'px'; }
+  },{passive:true});
+  const map={home:'home',letter:'letter',story:'story',reasons:'reasons',photos:'photos'};
+  const obs=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===e.target.id)); } }); },{rootMargin:'-40% 0px -50% 0px'});
+  Object.keys(map).forEach(id=>{ const el=document.getElementById(id); if(el) obs.observe(el); });
+})();
+
+/* ---------- promises ---------- */
+const PROMISES=[
+  'I will pause before I speak — especially when I’m joking.',
+  'If I hurt you, I listen first. No defending, no deflecting.',
+  'Your feelings will never be the punchline again.',
+  'I will show you daily — calls, care, little surprises — not just say it.'
+];
+let promiseState=JSON.parse(localStorage.getItem('trinh_promises')||'[false,false,false,false]');
+function renderPromises(){
+  const box=$('#promiseList'); box.innerHTML='';
+  PROMISES.forEach((p,i)=>{
+    const row=document.createElement('button');
+    row.className='w-full text-left flex items-start gap-3 rounded-2xl p-3.5 border transition '+(promiseState[i]?'bg-wine text-cream border-wine':'bg-cream border-wine/12 text-[#4A2E3A]');
+    row.innerHTML=`<span class="mt-.5 w-6 h-6 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${promiseState[i]?'bg-cream text-wine':'bg-wine/10 text-wine'}">${promiseState[i]?'✓':(i+1)}</span><span class="text-[13.5px] leading-snug font-medium">${p}</span>`;
+    row.onclick=()=>{ promiseState[i]=!promiseState[i]; localStorage.setItem('trinh_promises',JSON.stringify(promiseState)); renderPromises(); if(promiseState[i]){ vibrate(15); toast('Promise locked in ♥'); smallConfetti(); } };
+    box.appendChild(row);
+  });
+  const n=promiseState.filter(Boolean).length; $('#promiseCount').textContent=n+'/4';
+}
+renderPromises();
+
+/* ---------- timeline ---------- */
+const MILES=[
+  {d:'March 2025', t:'The first “hi”', x:'A random hello that didn’t feel random at all. I still remember re-reading your first messages and smiling like an idiot.', e:'✨'},
+  {d:'April 2025', t:'Calls till 3am', x:'“One more minute” became three hours. Lag, whispers so we wouldn’t wake anyone, and falling asleep on call.', e:'📞'},
+  {d:'Summer 2025', t:'The first “I love you”', x:'Nervous, quiet, real. My heart was louder than my mic. Yours is still my favorite sentence.', e:'💌'},
+  {d:'Autumn 2025', t:'First big fight, first repair', x:'We learned we can disagree and still choose each other. That’s when I knew this was grown-up love.', e:'🌧️'},
+  {d:'Dec 2025', t:'Christmas apart, together', x:'Different cities, same movie, synced play button, screenshots of us “together.” Distance lost that night.', e:'🎄'},
+  {d:'March 2026', t:'One year. We made it.', x:'365 days of good mornings and goodnights across screens. I cried happy. You pretended not to.', e:'🎂'},
+  {d:'Now • ~543 days', t:'I messed up — and I’m fixing it', x:'I hurt you with words. I’m sorry. This page is proof: I choose us, I choose growth, I choose you.', e:'♥', now:true},
+];
+(function(){
+  const tl=$('#timeline'); tl.innerHTML='';
+  MILES.forEach(m=>{
+    const el=document.createElement('div');
+    el.className='flex gap-4';
+    el.innerHTML=`<div class="flex flex-col items-center shrink-0"><div class="w-10 h-10 rounded-full ${m.now?'bg-wine text-cream':'bg-white border border-gold/30 text-[18px]'} shadow-soft flex items-center justify-center text-[18px] relative z-10">${m.e}</div></div>
+    <div class="flex-1 rounded-2xl ${m.now?'bg-wine text-cream':'bg-white/85 border border-gold/20'} p-4 shadow-soft backdrop-blur">
+      <p class="text-[10px] tracking-[.2em] uppercase font-bold ${m.now?'text-gold':'text-golddark'}">${m.d}</p>
+      <h4 class="serif text-[20px] font-semibold leading-tight mt-.5">${m.t}</h4>
+      <p class="text-[13px] leading-relaxed mt-1 ${m.now?'text-cream/80':'text-[#5A404B]'}">${m.x}</p>
+    </div>`;
+    tl.appendChild(el);
+  });
+})();
+
+/* ---------- reasons deck ---------- */
+const REASONS=[
+  {e:'🌙', t:'Your 2am voice', x:'Sleepy, soft, a little giggly. My favorite sound in the world, even through a crackly call.', tag:'tender'},
+  {e:'💪', t:'Your quiet strength', x:'You carry so much and still show up kind. You make strong look gentle.', tag:'admire'},
+  {e:'😂', t:'Your laugh', x:'The real one — not the polite one. When you snort-laugh, my whole day resets.', tag:'favorite'},
+  {e:'🧠', t:'How smart you are', x:'You notice everything. You remember tiny things I said months ago. You amaze me.', tag:'admire'},
+  {e:'💬', t:'You tell me the truth', x:'Even when it’s uncomfortable. Especially then. You make me a better man.', tag:'respect'},
+  {e:'🍜', t:'Food opinions', x:'You defend your favorite noodles like a lawyer. I’d lose every argument happily.', tag:'cute'},
+  {e:'📸', t:'Screenshot queen', x:'500 screenshots of us. “Evidence,” you say. I call it our museum.', tag:'us'},
+  {e:'🌧️', t:'You feel deeply', x:'You cry at movies, you care hard. I will never make fun of that softness again. I’ll protect it.', tag:'promise'},
+  {e:'✈️', t:'You believe in “someday close”', x:'Through time zones and waiting, you never stopped planning our same-city life. Me neither.', tag:'future'},
+  {e:'🎶', t:'Your singing on call', x:'Off-key, proud, perfect. Please never stop sending voice notes.', tag:'cute'},
+  {e:'🤍', t:'How you forgive', x:'You don’t pretend it didn’t hurt — you’re honest, then you give me a chance to do better. Thank you.', tag:'grateful'},
+  {e:'🌹', t:'Simply, you', x:'No reason needed. Before coffee, before makeup, half-asleep — you, always you. Anh yêu em.', tag:'forever'},
+];
+let rIdx=0, loved=parseInt(localStorage.getItem('trinh_loved')||'0'), order=[...REASONS.keys()];
+$('#reasonTotalLabel').textContent=REASONS.length;
+function renderReason(dir){
+  const card=$('#reasonCard'); const r=REASONS[order[rIdx]];
+  card.style.transform=dir==='left'?'translateX(-60px) rotate(-6deg)':dir==='right'?'translateX(60px) rotate(6deg)':'';
+  card.style.opacity=0;
+  setTimeout(()=>{
+    $('#reasonTag').textContent='reason '+String(rIdx+1).padStart(2,'0')+' • '+r.tag;
+    $('#reasonCount').textContent=(rIdx+1)+' / '+REASONS.length;
+    $('#reasonEmoji').textContent=r.e; $('#reasonTitle').textContent=r.t; $('#reasonText').textContent=r.x;
+    $('#reasonBar').style.width=((rIdx+1)/REASONS.length*100)+'%';
+    $('#lovedMini').textContent='♥ '+loved+' loved';
+    card.style.transform=''; card.style.opacity=1;
+  },180);
+}
+renderReason();
+function nextReason(lovedIt){
+  if(lovedIt){ loved++; localStorage.setItem('trinh_loved',loved); burstHearts($('#btnReasonLove')); vibrate(12); if((rIdx+1)%REASONS.length===0) toast('You loved them all — just like I love all of you'); }
+  rIdx=(rIdx+1)%REASONS.length; renderReason(lovedIt?'right':'left');
+}
+$('#btnReasonNext').onclick=()=>nextReason(false);
+$('#btnReasonLove').onclick=()=>nextReason(true);
+$('#btnShuffle').onclick=()=>{ order=order.sort(()=>Math.random()-.5); rIdx=0; renderReason(); toast('Shuffled with love'); };
+// swipe
+(function(){ let sx=null; const el=$('#reasonCard');
+  el.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+  el.addEventListener('touchend',e=>{ if(sx==null) return; const dx=e.changedTouches[0].clientX-sx; if(dx>50) nextReason(true); else if(dx<-50) nextReason(false); sx=null; });
+})();
+
+/* thanks marquee */
+(function(){ const items=['thank you for your patience ♥','for 3am calls ♥','for your honesty ♥','for your laugh ♥','for choosing us ♥','anh yêu em ♥']; const m=$('#thanksMarquee'); let html=''; for(let k=0;k<2;k++) items.forEach(t=>{ html+=`<span class="whitespace-nowrap text-[12px] font-semibold bg-white border border-wine/10 rounded-full px-4 py-2 shadow-soft text-wine">${t}</span>`; }); m.innerHTML=html; })();
+
+/* ---------- jokes + open when ---------- */
+let JOKES=[
+  {t:'The “goodnight” that never ends', p:'We say goodnight 14 times. “Okay sleep now.” … “Wait, one more thing.” 47 minutes later: still here. Wouldn’t have it any other way.'},
+  {t:'Buffering Queen', p:'Your face freezes mid-laugh on every call and I screenshot it every time. My gallery is 80% your frozen funny faces. No regrets.'},
+  {t:'Translator-in-chief', p:'You teaching me Vietnamese and me butchering every tone. “Ma, má, mả…” — you laughing so hard you couldn’t breathe. Teach me again tonight?'},
+  {t:'Professional screenshotter', p:'“Did you see what you just sent??” *screenshot sent in 0.2s* Nothing escapes you. I love that (and fear it a little).'},
+  {t:'Laggy love song', p:'Us trying to sing together on call with 2-second delay = accidental remix. We call it our duet. It’s terrible. It’s perfect.'},
+  {t:'The “hehe” code', p:'Your “hehe” can mean happy, shy, guilty, or “you’re in trouble.” I’ve become fluent in hehe. Currently decoding: this website = forgiven? 🥺'},
+];
+try{ const extra=JSON.parse(localStorage.getItem('trinh_jokes')||'[]'); JOKES=JOKES.concat(extra); }catch(e){}
+function renderJokes(){
+  const box=$('#jokeList'); box.innerHTML='';
+  JOKES.forEach((j,i)=>{
+    const d=document.createElement('div');
+    d.className='joke rounded-2xl bg-white/85 border border-gold/20 shadow-soft overflow-hidden';
+    d.innerHTML=`<button class="w-full flex items-center gap-3 p-4 text-left"><span class="w-9 h-9 rounded-full bg-blush flex items-center justify-center text-[16px] shrink-0">😄</span><span class="flex-1"><span class="block text-[13.5px] font-bold text-winedeep leading-snug">${j.t}</span><span class="block text-[11px] text-muted">tap to reveal • only we get it</span></span><span class="joke-plus w-8 h-8 rounded-full bg-wine/10 text-wine flex items-center justify-center text-[20px]">+</span></button><div class="joke-body"><p class="px-4 pb-4 pt-0 text-[13.5px] leading-relaxed text-[#5A404B] hand !text-[19px] !leading-snug">${j.p}</p></div>`;
+    d.querySelector('button').onclick=()=>{ d.classList.toggle('open'); vibrate(8); };
+    box.appendChild(d);
+  });
+}
+renderJokes();
+$('#btnAddJoke').onclick=()=>{
+  const t=$('#newJokeTitle').value.trim(), p=$('#newJokePunch').value.trim();
+  if(!t||!p){ toast('Write both title + memory, love'); return; }
+  const extra=JSON.parse(localStorage.getItem('trinh_jokes')||'[]'); extra.unshift({t,p}); localStorage.setItem('trinh_jokes',JSON.stringify(extra));
+  JOKES.unshift({t,p}); renderJokes(); $('#newJokeTitle').value=''; $('#newJokePunch').value=''; toast('Added to our lore ♥'); smallConfetti();
+};
+
+const OWS=[
+  {e:'😡', k:'open when…', t:'you’re still mad at me', b:'You’re allowed to be. I earned it. Breathe with me: in… out… I’m not going anywhere. When you’re ready, I’m here to listen — really listen — no jokes, no defense. You matter more than my pride, always.'},
+  {e:'🌙', k:'open when…', t:'you miss me', b:'Close your eyes. I’m that voice saying “I’m here, em ơi.” Play our song, hug your pillow extra tight and pretend it’s me refusing to let go. Miles can’t touch what we have. I miss you more.'},
+  {e:'😴', k:'open when…', t:'you can’t sleep', b:'Put your phone on your chest so it feels like my heartbeat. Think of my hand drawing circles on your back. 1…2…3… I love you… 4…5…6… I’m sorry… sleep now, my love. I’ll guard your dreams.'},
+  {e:'😂', k:'open when…', t:'you need to laugh', b:'Remember my terrible Vietnamese tones? MA MÁ MẢ MÃ MẠ — I just tried to say “I love you” and probably ordered chicken. See? I’m an idiot, but I’m YOUR idiot. Smile for me? There she is.'},
+];
+(function(){ const g=$('#openWhenGrid'); OWS.forEach((o,i)=>{
+  const b=document.createElement('button');
+  b.className='rounded-2xl bg-white border border-gold/25 shadow-soft p-4 text-center active:scale-[.97] transition';
+  b.innerHTML=`<div class="text-[30px]">${o.e}</div><p class="text-[10px] tracking-[.18em] uppercase font-bold text-muted mt-1">${o.k}</p><p class="serif text-[17px] font-semibold text-winedeep leading-tight">${o.t}</p><p class="text-[11px] text-golddark font-bold mt-1 underline underline-offset-4">tap to open</p>`;
+  b.onclick=()=>{ $('#owEmoji').textContent=o.e; $('#owKicker').textContent=o.k; $('#owTitle').textContent=o.t; $('#owBody').textContent=o.b; const m=$('#owModal'); m.classList.remove('hidden'); m.classList.add('flex'); vibrate(10); };
+  g.appendChild(b);
+});})();
+$('#owClose').onclick=$('#owBg').onclick=()=>{ $('#owModal').classList.add('hidden'); $('#owModal').classList.remove('flex'); };
+
+/* ---------- photos: upload + gallery + lightbox ---------- */
+const LS_PHOTOS='trinh_photos_v1', LS_HIDDEN='trinh_hidden_v1';
+const DEFAULTS=[
+  {id:'d1', src:'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop', cap:'us, in another universe', date:'our vibe • always'},
+  {id:'d2', src:'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop', cap:'holding on across miles', date:'long distance, close hearts'},
+  {id:'d3', src:'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop', cap:'flowers I owe you IRL', date:'placeholder until I deliver'},
+  {id:'d4', src:'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=800&auto=format&fit=crop', cap:'that 3am call energy', date:'sleepy + happy'},
+  {id:'d5', src:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=800&auto=format&fit=crop', cap:'soft like your laugh', date:'for Trinh'},
+  {id:'d6', src:'https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?q=80&w=800&auto=format&fit=crop', cap:'your screenshots folder', date:'add OURS here ↓'},
+];
+function getUser(){ try{ return JSON.parse(localStorage.getItem(LS_PHOTOS)||'[]'); }catch(e){ return []; } }
+function getHidden(){ try{ return JSON.parse(localStorage.getItem(LS_HIDDEN)||'[]'); }catch(e){ return []; } }
+function allPhotos(){ const h=getHidden(); const u=getUser(); const d=DEFAULTS.filter(x=>!h.includes(x.id)); return [...u, ...d]; }
+let lbIdx=0;
+function renderGallery(){
+  const grid=$('#galleryGrid'); const photos=allPhotos(); grid.innerHTML='';
+  if(!photos.length){ grid.innerHTML=`<div class="col-span-2 rounded-2xl bg-white/70 border border-dashed border-wine/25 p-8 text-center"><p class="hand text-[22px] text-wine">no photos yet — add our first?</p></div>`; return; }
+  photos.forEach((p,i)=>{
+    const f=document.createElement('figure');
+    f.className='rounded-2xl overflow-hidden bg-white border border-gold/20 shadow-soft relative group';
+    f.innerHTML=`<img src="${p.src}" loading="lazy" class="w-full h-48 object-cover" alt="memory"><div class="p-2.5"><p class="hand text-[18px] leading-none text-winedeep truncate">${p.cap||'with love'}</p><p class="text-[10.5px] text-muted mt-0.5 truncate">${p.date||''} ${p.mine?'• yours ♥':''}</p></div>${p.mine?'<span class="absolute top-2 left-2 text-[10px] font-bold bg-wine text-cream px-2.5 py-1 rounded-full">YOU ADDED ♥</span>':''}`;
+    f.onclick=()=>openLB(i);
+    grid.appendChild(f);
+  });
+}
+renderGallery();
+function compress(file){ return new Promise((res,rej)=>{
+  const url=URL.createObjectURL(file); const img=new Image();
+  img.onload=()=>{ const max=1100; let w=img.width,h=img.height; const sc=Math.min(1, max/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+    const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    URL.revokeObjectURL(url); res(cv.toDataURL('image/jpeg',.82)); };
+  img.onerror=rej; img.src=url;
+});}
+async function handleFiles(list){
+  if(!list||!list.length) return; toast('Adding your photos…');
+  let arr=getUser();
+  for(const f of list){
+    if(!f.type.startsWith('image/')) continue;
+    try{ const src=await compress(f); arr.unshift({id:uid(), src, cap:'new memory with you ♥', date:new Date().toLocaleDateString(undefined,{month:'short',day:'numeric'})+' • just added', mine:true}); }
+    catch(e){ toast('Could not read one photo'); }
+  }
+  try{ localStorage.setItem(LS_PHOTOS, JSON.stringify(arr)); }
+  catch(e){ toast('Storage full — delete an old photo to add more'); arr=arr.slice(0,12); try{localStorage.setItem(LS_PHOTOS,JSON.stringify(arr));}catch(_){} }
+  renderGallery(); vibrate(15); toast('Saved ♥ tap a photo to add a caption'); smallConfetti();
+}
+$('#fileGallery').addEventListener('change',e=>{ handleFiles(e.target.files); e.target.value=''; });
+$('#fileCamera').addEventListener('change',e=>{ handleFiles(e.target.files); e.target.value=''; });
+$('#btnRestore').onclick=()=>{ localStorage.removeItem(LS_HIDDEN); renderGallery(); toast('Placeholders restored'); };
+
+function openLB(i){ lbIdx=i; updateLB(); const m=$('#lightbox'); m.classList.remove('hidden'); document.body.style.overflow='hidden'; }
+function closeLB(){ $('#lightbox').classList.add('hidden'); document.body.style.overflow=''; }
+function updateLB(){ const photos=allPhotos(); if(!photos.length){ closeLB(); return; } lbIdx=(lbIdx+photos.length)%photos.length; const p=photos[lbIdx];
+  $('#lbImg').src=p.src; $('#lbCap').textContent=p.cap||'with love'; $('#lbDate').textContent=(p.date||'')+(p.mine?' • added by you ♥':' • ours'); $('#lbIndex').textContent=(lbIdx+1)+' / '+photos.length;
+}
+$('#lbClose').onclick=$('#lbBg').onclick=closeLB;
+$('#lbPrev').onclick=()=>{ lbIdx--; updateLB(); };
+$('#lbNext').onclick=()=>{ lbIdx++; updateLB(); };
+$('#lbDown').onclick=()=>{ const p=allPhotos()[lbIdx]; const a=document.createElement('a'); a.href=p.src; a.download='for-trinh-'+(lbIdx+1)+'.jpg'; a.click(); toast('Downloading love…'); };
+$('#lbDel').onclick=()=>{
+  const photos=allPhotos(); const p=photos[lbIdx]; if(!p) return;
+  if(p.mine){ let u=getUser().filter(x=>x.id!==p.id); localStorage.setItem(LS_PHOTOS,JSON.stringify(u)); }
+  else{ let h=getHidden(); h.push(p.id); localStorage.setItem(LS_HIDDEN,JSON.stringify(h)); }
+  toast('Deleted'); renderGallery(); updateLB(); if(!allPhotos().length) closeLB();
+};
+$('#lbEdit').onclick=()=>{
+  const photos=allPhotos(); const p=photos[lbIdx]; if(!p) return;
+  const cur=p.cap||'';
+  const cap=$('#lbCap'); const editing=cap.isContentEditable;
+  if(!editing){ cap.contentEditable=true; cap.focus(); document.execCommand&&document.execCommand('selectAll',false,null); $('#lbEdit').textContent='save'; toast('Type, then tap save'); }
+  else{ cap.contentEditable=false; $('#lbEdit').textContent='edit'; const nv=cap.textContent.trim()||'with love';
+    if(p.mine){ let u=getUser(); const it=u.find(x=>x.id===p.id); if(it){ it.cap=nv; localStorage.setItem(LS_PHOTOS,JSON.stringify(u)); } }
+    else{ // store override as user copy? simplest: hide default + add user copy
+      let h=getHidden(); if(!h.includes(p.id)){ h.push(p.id); localStorage.setItem(LS_HIDDEN,JSON.stringify(h)); }
+      let u=getUser(); u.unshift({id:uid(), src:p.src, cap:nv, date:p.date, mine:true}); try{localStorage.setItem(LS_PHOTOS,JSON.stringify(u));}catch(e){}
+    }
+    renderGallery(); toast('Caption saved ♥');
+  }
+};
+
+/* ---------- coupons ---------- */
+const COUPONS=[
+  {e:'🍿', t:'Your-choice movie night', x:'You pick. I press play, no complaints, synced + snacks on me (delivery to you).', c:'MOVIE-4-TRINH'},
+  {e:'🍜', t:'Favorite food, my treat', x:'Order whatever you crave. I pay, you eat, I listen to your whole day.', c:'FOOD-4-TRINH'},
+  {e:'🎧', t:'Unlimited vent session', x:'Redeem when annoyed — even at me. I listen, no fixing unless you ask.', c:'LISTEN-4-TRINH'},
+  {e:'🧸', t:'Big IRL hug, IOU', x:'Valid forever. To be redeemed the second miles disappear. Interest accrues daily.', c:'HUG-4-TRINH'},
+];
+let claimed=JSON.parse(localStorage.getItem('trinh_claimed')||'[]');
+function renderCoupons(){
+  const box=$('#couponList'); box.innerHTML='';
+  COUPONS.forEach((c,i)=>{
+    const is=claimed.includes(c.c);
+    const d=document.createElement('div');
+    d.className='rounded-2xl p-[1.5px] bg-gradient-to-r from-gold via-blushdeep to-wine';
+    d.innerHTML=`<div class="rounded-2xl bg-[#FFFEFB] p-4 flex gap-4 items-center ${is?'opacity-90':''}">
+      <div class="w-12 h-12 rounded-2xl ${is?'bg-wine text-cream':'bg-blush text-[24px]'} flex items-center justify-center shrink-0 text-[24px]">${is?'✓':c.e}</div>
+      <div class="flex-1 min-w-0"><p class="text-[14px] font-bold text-winedeep leading-tight">${c.t}</p><p class="text-[12.5px] text-muted leading-snug mt-0.5">${c.x}</p><p class="text-[10px] tracking-[.18em] font-bold text-golddark mt-1">${c.c}</p></div>
+      <button class="shrink-0 text-[12px] font-bold px-4 py-2.5 rounded-xl ${is?'coupon-claimed bg-wine':'bg-wine text-cream btn-wine'}"><span class="claim-label">Claim</span><span class="claimed-label">Claimed ♥</span></button>
+    </div>`;
+    d.querySelector('button').onclick=(ev)=>{ if(claimed.includes(c.c)){ toast('Already yours, love'); return; } claimed.push(c.c); localStorage.setItem('trinh_claimed',JSON.stringify(claimed)); renderCoupons(); burstHearts(ev.target); vibrate(20); toast('Claimed! I owe you ♥'); };
+    box.appendChild(d);
+  });
+}
+renderCoupons();
+
+/* ---------- forgive + love taps ---------- */
+$('#btnYes').onclick=()=>{ const m=$('#yesModal'); m.classList.remove('hidden'); m.classList.add('flex'); vibrate([20,40,20]); bigCelebration(); };
+$('#yesClose').onclick=()=>{ $('#yesModal').classList.add('hidden'); $('#yesModal').classList.remove('flex'); burstHearts($('#yesClose')); toast('Virtual hug sent 🤍'); };
+$('#btnTime').onclick=()=>{ const m=$('#timeModal'); m.classList.remove('hidden'); m.classList.add('flex'); };
+$('#timeClose').onclick=$('#timeBg').onclick=()=>{ $('#timeModal').classList.add('hidden'); $('#timeModal').classList.remove('flex'); };
+
+let loves=parseInt(localStorage.getItem('trinh_love_taps')||'0'); $('#loveCount').textContent=loves;
+$('#loveTapBtn').onclick=(e)=>{
+  loves++; localStorage.setItem('trinh_love_taps',loves); $('#loveCount').textContent=loves; vibrate(10); burstHearts(e.currentTarget);
+  const msgs={10:'10 kisses! keep going…',50:'50! I feel them, I swear',100:'100 loves?! marrying you, that’s it',200:'200 — okay you win, I love you more',500:'500!! my cheek hurts from smiling'};
+  if(msgs[loves]){ $('#loveMsg').textContent=msgs[loves]; toast(msgs[loves]); smallConfetti(); }
+  else $('#loveMsg').textContent=loves<10?'every tap = one kiss through the screen':loves+' kisses and counting…';
+};
+if(loves>0) $('#loveMsg').textContent=loves+' kisses and counting…';
+
+/* hearts burst */
+function burstHearts(fromEl){
+  const r=fromEl.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  for(let i=0;i<10;i++){ const s=document.createElement('div'); s.className='heart-particle'; s.textContent=['♥','💖','🤍','💗'][Math.floor(Math.random()*4)]; s.style.left=cx+'px'; s.style.top=cy+'px'; s.style.fontSize=(12+Math.random()*18)+'px';
+    s.style.setProperty('--dx',(Math.random()*160-80)+'px'); s.style.setProperty('--dy',(-40-Math.random()*120)+'px'); s.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1300); }
+}
+function smallConfetti(){ confetti({particleCount:45, spread:70, origin:{y:.7}, colors:['#5E1E33','#B9975B','#F4CFC9','#E8AFAF']}); }
+function bigCelebration(){
+  const end=Date.now()+1800;
+  (function f(){ confetti({particleCount:6, angle:60, spread:60, origin:{x:0,y:.7}, colors:['#5E1E33','#B9975B','#ff8fab','#fff']}); confetti({particleCount:6, angle:120, spread:60, origin:{x:1,y:.7}, colors:['#5E1E33','#B9975B','#ff8fab','#fff']}); if(Date.now()<end) requestAnimationFrame(f); })();
+  setTimeout(()=>confetti({particleCount:180, spread:120, origin:{y:.5}, colors:['#5E1E33','#B9975B','#F4CFC9','#ffffff']}),300);
+}
+
+/* ---------- hold to seal ---------- */
+(function(){
+  const ring=$('#holdRing'); let t0=null, raf=null, prog=0;
+  function setP(p){ ring.style.setProperty('--p',(p*100)+'%'); }
+  function start(e){ e.preventDefault(); t0=performance.now(); prog=0;
+    function step(now){ prog=(now-t0)/1500; if(prog>=1){ setP(1); done(); return; } setP(prog); raf=requestAnimationFrame(step); }
+    raf=requestAnimationFrame(step);
+  }
+  function cancel(){ if(prog<1){ cancelAnimationFrame(raf); setP(0); prog=0; } }
+  function done(){ cancelAnimationFrame(raf); vibrate([30,50,30]); $('#holdHint').innerHTML='<span class="text-wine font-bold">Sealed with a kiss ♥ thank you for reading</span>'; smallConfetti(); burstHearts(ring); }
+  ring.addEventListener('pointerdown',start); addEventListener('pointerup',cancel); ring.addEventListener('pointerleave',cancel);
+})();
+
+/* ---------- read aloud + copy ---------- */
+let speaking=false;
+$('#btnReadAloud').onclick=()=>{
+  try{
+    if(speaking){ speechSynthesis.cancel(); speaking=false; $('#readLabel').textContent='Hear me say it'; return; }
+    const txt=$('#letterText').innerText; const u=new SpeechSynthesisUtterance(txt); u.rate=.95; u.pitch=1;
+    u.onend=()=>{ speaking=false; $('#readLabel').textContent='Hear me say it'; };
+    speechSynthesis.cancel(); speechSynthesis.speak(u); speaking=true; $('#readLabel').textContent='Stop • listening…'; toast('Listening… imagine it’s my voice');
+  }catch(e){ toast('Audio not supported here, read slowly for me?'); }
+};
+$('#btnCopyLetter').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#letterText').innerText); toast('Letter copied — keep me close'); }catch(e){ toast('Press-hold to copy, love'); } };
+
+/* ---------- music box (WebAudio lullaby) ---------- */
+let actx=null, musicOn=false, musicTimer=null, step=0;
+const MELODY=[261.63,329.63,392,523.25, 392,329.63, 440,349.23,392,523.25, 587.33,523.25,392,329.63, 261.63,0, 293.66,349.23,440,349.23, 392,0,261.63,0];
+function note(f,t){ if(!f) return; const o=actx.createOscillator(), g=actx.createGain(); o.type='sine'; o.frequency.value=f;
+  const fl=actx.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=1200;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.18,t+.08); g.gain.exponentialRampToValueAtTime(.0001,t+1.1);
+  o.connect(fl); fl.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+1.2);
+  const o2=actx.createOscillator(), g2=actx.createGain(); o2.type='triangle'; o2.frequency.value=f/2;
+  g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(.06,t+.1); g2.gain.exponentialRampToValueAtTime(.0001,t+1);
+  o2.connect(g2); g2.connect(actx.destination); o2.start(t); o2.stop(t+1.1);
+}
+$('#musicBtn').onclick=()=>{
+  if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)(); }
+  if(!musicOn){ actx.resume(); musicOn=true; $('#musicIconOff').classList.add('hidden'); $('#musicIconOn').classList.remove('hidden'); toast('Playing our lullaby ♪');
+    let next=actx.currentTime+.1;
+    musicTimer=setInterval(()=>{ note(MELODY[step%MELODY.length], next); next+=.55; step++; },550);
+    $('#musicBtn').classList.add('!bg-wine','!text-cream');
+  } else { musicOn=false; clearInterval(musicTimer); $('#musicIconOff').classList.remove('hidden'); $('#musicIconOn').classList.add('hidden'); $('#musicBtn').classList.remove('!bg-wine','!text-cream'); toast('Paused — silence, but I’m still here'); }
+};
+
+/* ---------- footer utils ---------- */
+$('#btnReset').onclick=()=>{ if(confirm('Reset everything on this phone? (photos, loves, promises)')){ localStorage.removeItem(LS_PHOTOS); localStorage.removeItem(LS_HIDDEN); localStorage.removeItem('trinh_loved'); localStorage.removeItem('trinh_love_taps'); localStorage.removeItem('trinh_promises'); localStorage.removeItem('trinh_claimed'); localStorage.removeItem('trinh_jokes'); location.reload(); } };
+$('#btnHowToSave').onclick=()=>{ toast('iPhone: Share → Add to Home Screen ♥'); setTimeout(()=>alert('To keep this forever on your phone:\n\niPhone: tap Share (square + arrow) → Add to Home Screen → Add\n\nAndroid: tap ⋮ menu → Add to Home screen\n\nIt will live next to your apps, just for you, Trinh ♥'),400); };
+
+/* tap tiny scroll */
+$('#tapTiny').parentElement.style.cursor='pointer';
+$('#tapTiny').parentElement.onclick=()=>document.getElementById('forgive').scrollIntoView({behavior:'smooth'});
+</script>
 </body>
-  </html>
+</html>
